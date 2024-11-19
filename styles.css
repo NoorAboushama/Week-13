@@ -123,4 +123,61 @@ footer {
     background-color: #d4af37;
     color: #3e3e3e;
 }
+/* Cards Container */
+.cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2em;
+    padding: 2em;
+    background-color: #3e3e3e;
+    border-radius: 10px;
+    margin: 2em auto;
+    max-width: 1200px;
+}
+
+/* Individual Card */
+.card {
+    background-color: #2a2a2a;
+    color: #e0e0d1;
+    border: 1px solid #d4af37;
+    border-radius: 10px;
+    padding: 1.5em;
+    width: 300px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card h2 {
+    color: #d4af37;
+    margin-bottom: 0.5em;
+}
+
+.card p {
+    font-size: 1em;
+    line-height: 1.5;
+    margin-bottom: 1em;
+}
+
+.card button {
+    background-color: #d4af37;
+    color: #2a2a2a;
+    border: none;
+    border-radius: 5px;
+    padding: 0.5em 1em;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.card button:hover {
+    background-color: #e0e0d1;
+    color: #2a2a2a;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
 
