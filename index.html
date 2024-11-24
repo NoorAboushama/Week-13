@@ -7,12 +7,13 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
+<header>
     <img src="cats_and_robots.jpg" alt="Steampunk AI Portfolio Header" class="header-image">
-  <audio id="background-music" autoplay loop>
-    <source src="https://aitestkitchen.withgoogle.com/tools/music-fx/156nrnul0g000" type="audio/mpeg">
-    Your browser does not support the audio element.
-</audio>
+    <audio id="background-music" autoplay loop>
+        <source src="https://aitestkitchen.withgoogle.com/tools/music-fx/156nrnul0g000" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <button id="toggle-music" style="position: fixed; top: 10px; right: 10px; z-index: 1000;">Pause Music</button>
     <nav>
         <ul class="menu">
             <li><a href="#textual-ai">Textual AI</a></li>
@@ -92,4 +93,18 @@
         </div>
     </div>
 </section>
+<script>
+    const music = document.getElementById('background-music');
+    const toggleButton = document.getElementById('toggle-music');
+
+    toggleButton.addEventListener('click', () => {
+        if (music.paused) {
+            music.play();
+            toggleButton.textContent = 'Pause Music';
+        } else {
+            music.pause();
+            toggleButton.textContent = 'Play Music';
+        }
+    });
+</script>
 
