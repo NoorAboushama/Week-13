@@ -9,10 +9,12 @@
 <body>
 <header>
     <img src="cats_and_robots.jpg" alt="Steampunk AI Portfolio Header" class="header-image">
+    <!-- Background Music -->
     <audio id="background-music" loop>
-        <source src="https://aitestkitchen.withgoogle.com/tools/music-fx/156nrnul0g000" type="audio/mpeg">
+        <source src="assets/Moving In The Shadows - The Soundlings.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
+    <!-- Music Toggle Button -->
     <button id="toggle-music" style="position: fixed; top: 10px; right: 10px; z-index: 1000;">Play Music</button>
     <nav>
         <ul class="menu">
@@ -22,77 +24,78 @@
         </ul>
     </nav>
 </header>
-    <main>
-      <section id="textual-ai">
-    <h1>Textual AI Experiments</h1>
-    <div class="cards-container">
-        <div class="card">
-            <h2>Distant Read</h2>
-            <p>Explore large-scale textual analysis techniques to uncover patterns and trends in extensive datasets.</p>
-            <button onclick="location.href='distant-read.html'">Learn More</button>
-        </div>
-        <div class="card">
-            <h2>Generative Short Story</h2>
-            <p>Discover a creative short story generated entirely by AI, blending imagination and technology.</p>
-            <button onclick="location.href='generative-short-story.html'">Read Story</button>
-        </div>
-        <div class="card">
-            <h2>Conversation with a Bot</h2>
-            <p>Interact with a conversational AI and experience the capabilities of natural language processing in real-time.</p>
-            <button onclick="location.href='conversation-bot.html'">Start Chat</button>
-        </div>
-    </div>
-</section>
-        <section id="visual-ai">
-            <h1>Visual AI Experiments</h1>
-            <div class="carousel">
-                <div class="carousel-container">
-                    <div class="carousel-item active">
-                        <img src="image1.jpg" alt="Visual Experiment 1">
-                        <p class="caption">Caption for Image 1</p>
-                    </div>
-                    <div class="carousel-item">
-                        <img src="image2.jpg" alt="Visual Experiment 2">
-                        <p class="caption">Caption for Image 2</p>
-                    </div>
-                    <div class="carousel-item">
-                        <img src="image3.jpg" alt="Visual Experiment 3">
-                        <p class="caption">Caption for Image 3</p>
-                    </div>
-                    <div class="carousel-item">
-                        <img src="image4.jpg" alt="Visual Experiment 4">
-                        <p class="caption">Caption for Image 4</p>
-                    </div>
-                    <div class="carousel-item">
-                        <img src="image5.jpg" alt="Visual Experiment 5">
-                        <p class="caption">Caption for Image 5</p>
-                    </div>
-                </div>
-                <button class="carousel-button prev" onclick="moveCarousel(-1)">&#10094;</button>
-                <button class="carousel-button next" onclick="moveCarousel(1)">&#10095;</button>
+<main>
+    <section id="textual-ai">
+        <h1>Textual AI Experiments</h1>
+        <div class="cards-container">
+            <div class="card">
+                <h2>Distant Read</h2>
+                <p>Explore large-scale textual analysis techniques to uncover patterns and trends in extensive datasets.</p>
+                <button onclick="location.href='distant-read.html'">Learn More</button>
             </div>
-        </section>
-      <section id="procedural-ai">
-    <h1>Procedural AI Experiments</h1>
-    <div class="cards-container">
-        <!-- Chinese Dramas Finder Card -->
-        <div class="card">
-            <h2>Chinese Dramas Finder</h2>
-            <p>Rate and discover Chinese dramas with personalized recommendations powered by AI.</p>
-            <a href="https://nooraboushama.github.io/Week-10/" target="_blank" style="text-decoration: none;">
-                <button>Try It</button>
-            </a>
+            <div class="card">
+                <h2>Generative Short Story</h2>
+                <p>Discover a creative short story generated entirely by AI, blending imagination and technology.</p>
+                <button onclick="location.href='generative-short-story.html'">Read Story</button>
+            </div>
+            <div class="card">
+                <h2>Conversation with a Bot</h2>
+                <p>Interact with a conversational AI and experience the capabilities of natural language processing in real-time.</p>
+                <button onclick="location.href='conversation-bot.html'">Start Chat</button>
+            </div>
         </div>
-        <!-- AI-Powered Game Card -->
-        <div class="card">
-            <h2>AI-Powered Game</h2>
-            <p>Play an interactive game built using procedural generation techniques for a unique experience every time.</p>
-            <a href="https://nooraboushama.github.io/Game/" target="_blank" style="text-decoration: none;">
-                <button>Play Now</button>
-            </a>
+    </section>
+    <section id="visual-ai">
+        <h1>Visual AI Experiments</h1>
+        <div class="carousel">
+            <div class="carousel-container">
+                <div class="carousel-item active">
+                    <img src="image1.jpg" alt="Visual Experiment 1">
+                    <p class="caption">Caption for Image 1</p>
+                </div>
+                <div class="carousel-item">
+                    <img src="image2.jpg" alt="Visual Experiment 2">
+                    <p class="caption">Caption for Image 2</p>
+                </div>
+                <div class="carousel-item">
+                    <img src="image3.jpg" alt="Visual Experiment 3">
+                    <p class="caption">Caption for Image 3</p>
+                </div>
+                <div class="carousel-item">
+                    <img src="image4.jpg" alt="Visual Experiment 4">
+                    <p class="caption">Caption for Image 4</p>
+                </div>
+                <div class="carousel-item">
+                    <img src="image5.jpg" alt="Visual Experiment 5">
+                    <p class="caption">Caption for Image 5</p>
+                </div>
+            </div>
+            <button class="carousel-button prev" onclick="moveCarousel(-1)">&#10094;</button>
+            <button class="carousel-button next" onclick="moveCarousel(1)">&#10095;</button>
         </div>
-    </div>
-</section>
+    </section>
+    <section id="procedural-ai">
+        <h1>Procedural AI Experiments</h1>
+        <div class="cards-container">
+            <!-- Chinese Dramas Finder Card -->
+            <div class="card">
+                <h2>Chinese Dramas Finder</h2>
+                <p>Rate and discover Chinese dramas with personalized recommendations powered by AI.</p>
+                <a href="https://nooraboushama.github.io/Week-10/" target="_blank" style="text-decoration: none;">
+                    <button>Try It</button>
+                </a>
+            </div>
+            <!-- AI-Powered Game Card -->
+            <div class="card">
+                <h2>AI-Powered Game</h2>
+                <p>Play an interactive game built using procedural generation techniques for a unique experience every time.</p>
+                <a href="https://nooraboushama.github.io/Game/" target="_blank" style="text-decoration: none;">
+                    <button>Play Now</button>
+                </a>
+            </div>
+        </div>
+    </section>
+</main>
 <script>
     const music = document.getElementById('background-music');
     const toggleButton = document.getElementById('toggle-music');
@@ -107,4 +110,5 @@
         }
     });
 </script>
-
+</body>
+</html>
