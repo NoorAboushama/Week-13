@@ -3,208 +3,290 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chinese Dramas Finder</title>
+    <title>Improved Forest Game with Power-Ups and Constantly Moving Background</title>
     <style>
-        /* Scroll-like fantasy theme styles */
         body {
-            font-family: 'Cursive', serif;
-            background-color: #f0e6d2;
-            color: #4b2e39;
-            max-width: 1000px;
-            margin: 20px auto;
-            padding: 20px;
-            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.4);
-            border-radius: 10px;
-            border: 3px solid #d1b380;
-            background-image: url('https://www.transparenttextures.com/patterns/aged-paper.png');
+            margin: 0;
+            overflow: hidden;
         }
-        h1 {
-            text-align: center;
-            font-size: 2.5em;
-            color: #6b4226;
-            text-shadow: 1px 1px 3px #c7a98f;
-        }
-        .drama-container {
-            margin-bottom: 20px;
-            background-color: #fff4e6;
-            padding: 15px;
-            border: 2px solid #d1b380;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-        }
-        .drama-title {
-            font-weight: bold;
-            font-size: 1.3em;
-            color: #5e3c29;
-            margin-bottom: 10px;
-        }
-        .rating {
-            margin: 10px 0;
-        }
-        .rating input {
-            margin-right: 10px;
-        }
-        .preferences {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #f9e9c7;
-            border: 2px solid #d1b380;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-        }
-        .preferences h2, .recommendations h2 {
-            font-size: 1.8em;
-            color: #6b4226;
-            text-shadow: 1px 1px 2px #c7a98f;
-        }
-        .recommendations {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #fff4e6;
-            border: 2px solid #d1b380;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-        }
-        .rate-more-button {
+        canvas {
             display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            background-color: #6b4226;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.2em;
-            transition: background-color 0.3s;
         }
-        .rate-more-button:hover {
-            background-color: #54381d;
+        #score {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        #lives {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            color: white;
+            font-family: Arial, sans-serif;
         }
     </style>
 </head>
 <body>
-
-    <h1>Chinese Dramas Finder</h1>
-    <p style="text-align: center;">Discover and rate Chinese dramas to get personalized recommendations in a mystical, scroll-inspired theme.</p>
-    
-    <div id="dramas"></div>
-    <button class="rate-more-button" id="rateMoreButton">Rate 10 More Dramas</button>
-
-    <div class="preferences" id="preferences">
-        <h2>Your Genre Preferences</h2>
-        <p id="genreCount">No genres rated 3 or higher yet.</p>
-    </div>
-    <div class="recommendations" id="recommendations">
-        <h2>Recommended Dramas</h2>
-        <p id="recommendationList">Rate some dramas to see recommendations here.</p>
-    </div>
-
+    <div id="score">Score: 0</div>
+    <div id="lives">Lives: 3</div>
+    <canvas id="gameCanvas"></canvas>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const jsonData = "ChineseDramas.json"; // Path to JSON file in the same folder
-            let genrePreferences = {};
-            let ratedDramas = new Set(); // Track dramas already rated
-            let allDramas = []; // Store all dramas from JSON for recommendations
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const livesElement = document.getElementById('lives');
 
-            // Fetch JSON data and load the first set of dramas
-            fetch(jsonData)
-                .then(response => response.json())
-                .then(data => {
-                    allDramas = data;
-                    displayRandomDramas(10);
-                })
-                .catch(error => console.error("Error loading JSON data:", error));
+        // Set canvas dimensions to match the window size
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
 
-            // Display a random set of dramas, excluding previously rated ones
-            function displayRandomDramas(count) {
-                const dramasContainer = document.getElementById("dramas");
-                dramasContainer.innerHTML = ""; // Clear previous set
-                const unratedDramas = allDramas.filter(drama => !ratedDramas.has(drama.title));
-                const selectedDramas = [];
-                while (selectedDramas.length < count && unratedDramas.length > 0) {
-                    const randomIndex = Math.floor(Math.random() * unratedDramas.length);
-                    selectedDramas.push(unratedDramas.splice(randomIndex, 1)[0]);
+        // Background settings
+        const backgroundImage = new Image();
+        backgroundImage.src = 'forest.JPG';
+        let backgroundX = 0;
+        const backgroundSpeed = 2;
+
+        // Player settings
+        let player = {
+            x: 100,
+            y: canvas.height - 150,
+            width: 50,
+            height: 75,
+            speed: 5,
+            dx: 0,
+            dy: 0,
+            gravity: 1,
+            jumpStrength: -15,
+            onGround: true,
+            shielded: false
+        };
+
+        let score = 0;
+        let lives = 3;
+        let obstacles = [];
+        let powerUps = [];
+
+        // Function to create an obstacle
+        function createObstacle() {
+            const width = Math.random() * 50 + 20;
+            const height = Math.random() * 30 + 50;
+            const obstacle = {
+                x: canvas.width,
+                y: canvas.height - height - 100,
+                width: width,
+                height: height,
+                speed: 3 + score / 100,
+                color: 'red'
+            };
+            obstacles.push(obstacle);
+        }
+
+        // Function to create a power-up
+        function createPowerUp() {
+            const size = 30;
+            const type = Math.random() < 0.5 ? 'shield' : 'speed';
+            const powerUp = {
+                x: Math.random() * (canvas.width - size),
+                y: Math.random() * (canvas.height - size - 100),
+                width: size,
+                height: size,
+                type: type,
+                color: type === 'shield' ? 'green' : 'yellow'
+            };
+            powerUps.push(powerUp);
+        }
+
+        // Function to draw the background
+        function drawBackground() {
+            if (backgroundImage.complete) {
+                ctx.drawImage(backgroundImage, backgroundX, 0, canvas.width, canvas.height);
+                ctx.drawImage(backgroundImage, backgroundX + canvas.width, 0, canvas.width, canvas.height);
+
+                backgroundX -= backgroundSpeed;
+                if (backgroundX <= -canvas.width) {
+                    backgroundX = 0;
+                }
+            }
+        }
+
+        // Function to draw the player on the canvas
+        function drawPlayer() {
+            ctx.fillStyle = 'blue';
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+        }
+
+        // Function to draw obstacles
+        function drawObstacles() {
+            obstacles.forEach(obstacle => {
+                ctx.fillStyle = obstacle.color;
+                ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+            });
+        }
+
+        // Function to draw power-ups
+        function drawPowerUps() {
+            powerUps.forEach(powerUp => {
+                ctx.fillStyle = powerUp.color;
+                ctx.fillRect(powerUp.x, powerUp.y, powerUp.width, powerUp.height);
+            });
+        }
+
+        // Function to clear the canvas before each frame
+        function clear() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Update function to continuously redraw the player, obstacles, power-ups, and handle movement
+        function update() {
+            clear();
+            drawBackground();
+            drawPlayer();
+            drawObstacles();
+            drawPowerUps();
+
+            // Update player's position based on movement direction and gravity
+            player.x += player.dx;
+            player.y += player.dy;
+
+            // Apply gravity if player is not on the ground
+            if (!player.onGround) {
+                player.dy += player.gravity;
+            }
+
+            // Prevent player from moving out of bounds horizontally
+            if (player.x < 100) player.x = 100;
+            if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+            if (player.y + player.height > canvas.height) {
+                player.y = canvas.height - player.height;
+                player.dy = 0;
+                player.onGround = true;
+            }
+
+            // Update score as player moves to the right
+            score++;
+
+            // Display the updated score
+            scoreElement.textContent = `Score: ${score}`;
+
+            // Update obstacle positions
+            obstacles.forEach((obstacle, index) => {
+                obstacle.x -= backgroundSpeed + obstacle.speed;
+
+                // Remove obstacle if it goes off screen
+                if (obstacle.x + obstacle.width < 0) {
+                    obstacles.splice(index, 1);
                 }
 
-                selectedDramas.forEach((drama, index) => {
-                    const dramaDiv = document.createElement("div");
-                    dramaDiv.classList.add("drama-container");
-                    dramaDiv.innerHTML = `
-                        <div class="drama-title">${drama.title}</div>
-                        <div class="rating">
-                            <label><input type="radio" name="drama${index}" value="1" onclick="updatePreferences(${index}, ${JSON.stringify(drama.genres)}, 1)"> 1</label>
-                            <label><input type="radio" name="drama${index}" value="2" onclick="updatePreferences(${index}, ${JSON.stringify(drama.genres)}, 2)"> 2</label>
-                            <label><input type="radio" name="drama${index}" value="3" onclick="updatePreferences(${index}, ${JSON.stringify(drama.genres)}, 3)"> 3</label>
-                            <label><input type="radio" name="drama${index}" value="4" onclick="updatePreferences(${index}, ${JSON.stringify(drama.genres)}, 4)"> 4</label>
-                            <label><input type="radio" name="drama${index}" value="5" onclick="updatePreferences(${index}, ${JSON.stringify(drama.genres)}, 5)"> 5</label>
-                            <label><input type="radio" name="drama${index}" value="haven't watched" onclick="updatePreferences(${index}, ${JSON.stringify(drama.genres)}, 'haven\'t watched')"> Haven't watched it</label>
-                        </div>
-                    `;
-                    dramasContainer.appendChild(dramaDiv);
-                    ratedDramas.add(drama.title); // Mark this drama as rated
-                });
-            }
-
-            // Display additional 10 dramas for rating
-            function rateMoreDramas() {
-                displayRandomDramas(10);
-            }
-
-            document.getElementById("rateMoreButton").addEventListener("click", rateMoreDramas);
-
-            // Update genre preferences based on user ratings
-            function updatePreferences(index, genres, rating) {
-                genres.forEach(genre => {
-                    if (rating >= 3) {
-                        genrePreferences[genre] = (genrePreferences[genre] || 0) + 1;
-                    } else if (genrePreferences[genre]) {
-                        genrePreferences[genre] -= 1;
-                        if (genrePreferences[genre] <= 0) delete genrePreferences[genre];
+                // Check for collision with player
+                if (
+                    player.x < obstacle.x + obstacle.width &&
+                    player.x + player.width > obstacle.x &&
+                    player.y < obstacle.y + obstacle.height &&
+                    player.y + player.height > obstacle.y
+                ) {
+                    if (player.shielded) {
+                        player.shielded = false;
+                    } else {
+                        lives--;
+                        livesElement.textContent = `Lives: ${lives}`;
+                        if (lives <= 0) {
+                            if (confirm('Game Over! Your score: ' + score + '\nDo you want to start over?')) {
+                                resetGame();
+                            }
+                        } else {
+                            obstacles.splice(index, 1);
+                        }
                     }
-                });
-                displayGenrePreferences();
-                recommendDramas();
-            }
+                }
+            });
 
-            // Display genre preferences
-            function displayGenrePreferences() {
-                const genreCountElement = document.getElementById("genreCount");
-                const genres = Object.keys(genrePreferences).sort((a, b) => genrePreferences[b] - genrePreferences[a]);
-                genreCountElement.innerHTML = genres.length > 0
-                    ? genres.map(genre => `${genre}: ${genrePreferences[genre]}`).join(", ")
-                    : "No genres rated 3 or higher yet.";
-            }
-
-            // Recommend dramas based on top genres, excluding rated dramas
-            function recommendDramas() {
-                const sortedGenres = Object.keys(genrePreferences).sort((a, b) => genrePreferences[b] - genrePreferences[a]);
-                if (sortedGenres.length < 3) return;
-
-                const recommendations = [];
-                sortedGenres.slice(0, 3).forEach(genre => {
-                    const genreDramas = allDramas.filter(d => d.genres.includes(genre) && !ratedDramas.has(d.title));
-                    if (genreDramas.length > 0) {
-                        recommendations.push(genreDramas[Math.floor(Math.random() * genreDramas.length)]);
+            // Update power-up positions and check for collection
+            powerUps.forEach((powerUp, index) => {
+                if (
+                    player.x < powerUp.x + powerUp.width &&
+                    player.x + player.width > powerUp.x &&
+                    player.y < powerUp.y + powerUp.height &&
+                    player.y + player.height > powerUp.y
+                ) {
+                    if (powerUp.type === 'shield') {
+                        player.shielded = true;
+                    } else if (powerUp.type === 'speed') {
+                        if (player.speedTimeout) {
+                            clearTimeout(player.speedTimeout);
+                        }
+                        player.speed *= 2;
+                        player.speedTimeout = setTimeout(() => player.speed /= 2, 5000);
                     }
-                });
+                    powerUps.splice(index, 1);
+                }
+            });
 
-                displayRecommendations(recommendations);
+            requestAnimationFrame(update);
+        }
+
+        // Function to move the player
+        function movePlayer(e) {
+            switch (e.key) {
+                case 'ArrowRight':
+                    player.dx = player.speed;
+                    break;
+                case 'ArrowUp':
+                    if (player.onGround) {
+                        player.dy = player.jumpStrength;
+                        player.onGround = false;
+                    }
+                    break;
             }
+        }
 
-            // Display recommended dramas
-            function displayRecommendations(recommendations) {
-                const recommendationList = document.getElementById("recommendationList");
-                recommendationList.innerHTML = recommendations.length > 0
-                    ? recommendations.map(drama => `<strong>${drama.title}</strong> (${drama.genres.join(", ")})`).join("<br>")
-                    : "No recommendations available.";
+        // Event listener for keydown to handle player movement
+        document.addEventListener('keydown', movePlayer);
+
+        // Event listener for keyup to stop player movement
+        document.addEventListener('keyup', function stopPlayer(e) {
+            if (e.key === 'ArrowRight') {
+                player.dx = 0;
             }
         });
-    </script>
 
+        // Function to reset the game
+        function resetGame() {
+            player.x = 100;
+            player.y = canvas.height - 150;
+            player.dx = 0;
+            player.dy = 0;
+            player.onGround = true;
+            player.shielded = false;
+            score = 0;
+            lives = 3;
+            obstacles = [];
+            powerUps = [];
+            backgroundX = 0;
+            update();
+        }
+
+        // Ensure all images are loaded before starting the game
+        backgroundImage.onload = () => {
+            createObstacle();
+            setInterval(createObstacle, 2000);
+            setInterval(createPowerUp, 10000);
+            update();
+        };
+    </script>
 </body>
 </html>
 
- 
 
-  
-     
+
+
+
+
+
+
+
+
+
